@@ -1,2 +1,2 @@
 # CS361
-AI-based phishing email detection system
+AI-Assisted Phishing Detection for Healthcare Email Systems
