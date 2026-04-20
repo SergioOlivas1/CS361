@@ -1,0 +1,155 @@
+# Sample Email Dataset — CS361 Phishing Detection Project
+# Format: LABEL | SENDER | SUBJECT | BODY | HAS_ATTACHMENT
+# Labels: SAFE, SUSPICIOUS, PHISHING
+# Used for: baseline evidence, test case validation, model development
+# Last updated: April 2026 (Checkpoint 3)
+
+========================================
+DATASET: PHISHING EMAILS (7 samples)
+========================================
+
+[PHISHING-01]
+SENDER: no-reply@medicarе-update.xyz
+SUBJECT: URGENT: Patient portal access will be SUSPENDED
+BODY: Your patient portal account requires immediate verification. Click here to confirm your identity: http://bit.ly/verify-now. Failure to act will result in account closure.
+ATTACHMENT: No
+SIGNALS: Healthcare lure (patient portal), phishing keyword (confirm your identity), bad sender TLD (.xyz), URL shortener, urgency (all-caps)
+NOTES: Classic healthcare portal phishing. Display name may spoof clinic name.
+
+[PHISHING-02]
+SENDER: support@insurance-verify.click
+SUBJECT: Insurance Verification Required
+BODY: Please update your billing information to avoid claim denial. Validate your credentials at http://192.168.1.1/login
+ATTACHMENT: Yes
+SIGNALS: Healthcare lures (insurance verification, claim denied), phishing keywords (update your billing, validate your credentials), bad TLD (.click), IP address URL
+NOTES: Credential harvesting + malware attachment vector.
+
+[PHISHING-03]
+SENDER: noreply@123456789@mail.com
+SUBJECT: Security Alert: Suspicious activity on your account
+BODY: We detected unauthorized access to your account. Immediate response required. Reset your password now.
+ATTACHMENT: No
+SIGNALS: 4 phishing keywords, malformed sender (numeric username)
+NOTES: Fake IT security alert. Sender address is clearly malformed.
+
+[PHISHING-04]
+SENDER: billing@healthcare-updates.net
+DISPLAY NAME: Clinic Billing Department
+SUBJECT: Medicare Update: Action Required
+BODY: Your medicare update requires verification. Please confirm your email address at http://secure-update.healthcare-updates.net
+ATTACHMENT: No
+SIGNALS: Display-name spoofing, healthcare lure (medicare update), phishing keyword (confirm your email address), suspicious URL pattern
+NOTES: Display-name spoof — would appear as "Clinic Billing Department" in most email clients.
+
+[PHISHING-05]
+SENDER: no-reply@account-verify.click
+SUBJECT: V3RIFY YOUR ACC0UNT NOW
+BODY: We have detected susp3cted login attempt on your acc0unt. Cl1ck here to v3rify your identity immediately or your acc0unt will be cl0sed.
+ATTACHMENT: No
+SIGNALS: Obfuscated keywords (v3rify, acc0unt, cl1ck, susp3cted), bad TLD (.click)
+NOTES: Adversarial evasion attempt using character substitution. Caught by v2 obfuscation detection.
+
+[PHISHING-06]
+SENDER: support@login-yourclinic.secureportal.xyz
+SUBJECT: Action Required: Confirm your login within 24 hours
+BODY: Your account has been compromised. Action required within 24 hours. Failure to respond will result in account suspension. Click: http://login-yourclinic.secureportal.xyz/verify-account
+ATTACHMENT: No
+SIGNALS: 3 new v2 phishing keywords, bad TLD, login-URL pattern, verify-account URL pattern
+NOTES: Multi-signal sophisticated attack. Uses urgency, credential threats, and URL patterns simultaneously.
+
+[PHISHING-07]
+SENDER: claims@insurance-portal.ml
+DISPLAY NAME: HealthFirst Insurance Claims
+SUBJECT: EOB Statement: Claim Denied — Immediate Response Required
+BODY: Your recent claim has been denied. Please review your EOB statement and validate your credentials to file an appeal. Attach your prior authorization and submit to http://bit.ly/claims-appeal
+ATTACHMENT: Yes
+SIGNALS: Display-name spoof, EOB lure, claim denied lure, phishing keywords, bad TLD (.ml), URL shortener, attachment
+NOTES: Highest-complexity attack in dataset. Triggers 8 separate flags.
+
+========================================
+DATASET: LEGITIMATE EMAILS (8 samples)
+========================================
+
+[SAFE-01]
+SENDER: billing@yourclinic.org
+SUBJECT: Your appointment is confirmed for Tuesday
+BODY: Hello, your appointment with Dr. Smith is confirmed for Tuesday at 2pm. Please call us if you need to reschedule.
+ATTACHMENT: No
+SIGNALS: None
+NOTES: Standard appointment confirmation. Clean internal sender.
+
+[SAFE-02]
+SENDER: hr@yourclinic.org
+SUBJECT: Staff meeting notes attached
+BODY: Please find the notes from today's staff meeting attached. Let me know if you have any questions.
+ATTACHMENT: Yes
+SIGNALS: Attachment only (+10 pts)
+NOTES: Legitimate internal HR email with attachment. Should not trigger warning.
+
+[SAFE-03]
+SENDER: admin@yourclinic.org
+SUBJECT: Payroll system maintenance tonight
+BODY: The payroll system will be offline tonight from 10pm to 2am for scheduled maintenance. No action required.
+ATTACHMENT: No
+SIGNALS: None
+NOTES: Routine IT maintenance notification.
+
+[SAFE-04]
+SENDER: dr.johnson@yourclinic.org
+SUBJECT: Referral authorization for patient follow-up
+BODY: Hi team, I have submitted a referral authorization for Mrs. Rivera. Please process when you get a chance. Thanks.
+ATTACHMENT: Yes
+SIGNALS: Healthcare lure (referral authorization, +10), attachment (+10) = 20 pts total — Safe
+NOTES: Legitimate physician referral. Healthcare lures present but trusted sender domain keeps score low.
+
+[SAFE-05]
+SENDER: scheduler@yourclinic.org
+SUBJECT: Reminder: Your appointment tomorrow at 3pm
+BODY: This is a reminder that you have an appointment scheduled for tomorrow at 3pm with Dr. Patel. Reply to reschedule.
+ATTACHMENT: No
+SIGNALS: None
+NOTES: Appointment reminder. Clean.
+
+[SAFE-06]
+SENDER: it@yourclinic.org
+SUBJECT: Password policy reminder — expires in 30 days
+BODY: This is a reminder that your network password expires in 30 days. Please use the internal IT portal at https://it.yourclinic.org/password to update it before expiration.
+ATTACHMENT: No
+SIGNALS: Obfuscation pattern (password, +15) = 15 pts — Safe
+NOTES: Legitimate IT reminder. Note: "password" triggers obfuscation regex but trusted sender keeps overall score safe.
+
+[SAFE-07]
+SENDER: labs@yourclinic.org
+SUBJECT: Lab results available for Patient #4821
+BODY: Your recent lab results are now available. Please log in to the patient portal at https://portal.yourclinic.org to view them.
+ATTACHMENT: No
+SIGNALS: Healthcare lures (patient portal, lab results available, +20) = 20 pts — Safe
+NOTES: Edge case — trusted sender, portal link, healthcare lures. Correctly classified Safe due to trusted domain.
+
+[SAFE-08]
+SENDER: facilities@yourclinic.org
+SUBJECT: Parking lot resurfacing this weekend
+BODY: Please be aware that the south parking lot will be closed this weekend for resurfacing. Please use the north lot. Sorry for the inconvenience.
+ATTACHMENT: No
+SIGNALS: None
+NOTES: Non-clinical administrative notice. Completely clean.
+
+========================================
+EDGE CASES (2 samples — documented in CP3)
+========================================
+
+[EDGE-01]
+SENDER: noreply@accounts-yourclinic.xyz
+SUBJECT: Your health plan renewal is pending
+BODY: Your health plan renewal requires your attention. Please log in to the patient portal to review your options.
+ATTACHMENT: No
+EXPECTED: Phishing | ACTUAL v2: Suspicious (40/100)
+NOTES: Subdomain includes "yourclinic" but TLD is .xyz. Correctly flagged as suspicious but did not reach quarantine threshold. Documented limitation — threshold tuning needed for subdomain TLD patterns.
+
+[EDGE-02]
+SENDER: labs@yourclinic.org
+SUBJECT: Lab results available for Patient #4821
+BODY: Your recent lab results are now available. Please log in to the patient portal at https://portal.yourclinic.org to view them.
+ATTACHMENT: No
+EXPECTED: Suspicious | ACTUAL v2: Safe (20/100)
+NOTES: Trusted sender domain prevents score from reaching Suspicious threshold despite healthcare lures. The expected classification in the test was overly conservative — the email is genuinely legitimate.

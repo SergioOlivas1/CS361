@@ -1,79 +1,170 @@
-# CS361
-# AI-Assisted Phishing Detection for Healthcare Email Systems
+# CS361 — AI-Assisted Phishing Detection for Healthcare Email Systems
 
 ## Overview
-This project focuses on developing a basic AI-assisted system to detect phishing emails in a healthcare environment. The goal is to identify suspicious emails before users interact with them, helping reduce the risk of credential theft, malware infection, unauthorized access, and exposure of sensitive patient information.
+This project develops and validates an AI-assisted phishing detection system for a healthcare clinic email environment. The goal is to identify suspicious emails before users interact with them, reducing the risk of credential theft, malware infection, unauthorized access, and exposure of sensitive patient data (HIPAA).
+
+## Project Status
+| Checkpoint | Status | Focus |
+|---|---|---|
+| Checkpoint 1 | ✅ Complete | Scope, assets, initial threat assumptions |
+| Checkpoint 2 | ✅ Complete | Baseline analysis, threat modeling, risk matrix |
+| Checkpoint 3 | ✅ Complete | Defensive controls, validation, updated risk register |
+
+---
 
 ## Selected Domain
-Defensive AI in Cybersecurity (Phishing Email Detection)
-
-## Project Objective
-The objective of this project is to design and implement a system that can identify potential phishing emails before users interact with them. By flagging suspicious messages early, the system aims to reduce the risk of compromised accounts, malicious email activity, and unauthorized access within a healthcare organization.
+Defensive AI in Cybersecurity — Phishing Email Detection
 
 ## Problem Statement
-Phishing attacks remain one of the most common and effective cybersecurity threats, especially in healthcare environments where employees frequently interact with emails related to patients, billing, scheduling, and external communication. Traditional spam filters may not detect more sophisticated phishing attempts that imitate legitimate messages. This project studies how AI-assisted analysis can support early detection of suspicious emails before they reach or mislead end users.
+Phishing attacks remain one of the most common and effective cybersecurity threats in healthcare. Employees frequently interact with emails about patients, billing, scheduling, and external communication. Traditional spam filters miss sophisticated phishing attempts that imitate legitimate messages. This project studies how AI-assisted analysis can support early detection of suspicious emails before they reach or mislead end users.
 
 ## Organization / Use Case
-This system is designed for a small healthcare clinic. Employees in this environment regularly handle emails that may contain sensitive information or links to internal systems. Because healthcare data is highly sensitive, small clinics are attractive targets for phishing campaigns. The proposed system acts as a basic filtering layer that reviews incoming emails and flags suspicious messages.
+Small healthcare clinic. Employees handle sensitive emails daily. The system acts as a filtering layer that reviews incoming email and flags suspicious messages before delivery.
 
-## Scope
-This project focuses on detection only. The system will analyze email content, sender details, links, and message structure to identify suspicious emails. The scope is intentionally limited to a realistic one-month project timeline.
-
-This project does not include:
-- Full enterprise deployment
-- Live integration with a real email provider
-- Automated blocking or prevention actions
-- Advanced production-level model training and optimization
-
-## Main Assets to Protect
-- Patient data (health records and personal information)
-- Employee login credentials
-- Employee email accounts
-- Internal systems and network access
-
-### Highest Priority Assets
-1. Patient data
-2. Employee login credentials
-3. Internal systems and network access
-
-## Initial Threat Assumptions
-- Attackers may send phishing emails disguised as healthcare-related communication
-- Employees may accidentally interact with malicious links or attachments
-- Some phishing attempts may try to steal user credentials through fake login pages
-- Malicious attachments may be used to deliver malware
-- Compromised credentials may lead to unauthorized access to internal systems
-
-## Initial Threat List
-- Phishing emails
-- Credential harvesting
-- Malware attachments
-- Social engineering
-- Unauthorized access
+---
 
 ## System Flow
-Incoming Email → Preprocessing → Feature Extraction → AI Detection Model → Risk Scoring → Classification → User Notification
+```
+Incoming Email
+    → Preprocessing (extract sender, links, content)
+    → Feature Extraction (keywords, metadata, structure, URLs)
+    → AI Detection Engine (scoring against phishing indicators)
+    → Risk Scoring (0–100)
+    → Classification (Safe / Suspicious / Phishing)
+    → Action (Deliver / Warn user / Quarantine + Log)
+```
 
-## Team Members and Roles
-- Sergio Olivas — Project Lead / Research
-- Khumbo Nyirenda — Data Collection
-- Cerilo Yousif — Development
-- Ernest Apollon — Development
-- Victor Olatunji — Documentation
+---
+
+## Detection System — v2 (Checkpoint 3)
+
+### What's New in v2
+| Control | Description |
+|---|---|
+| Obfuscation Detection | Catches character-substitution evasion (v3rify, acc0unt, etc.) |
+| Display-Name Spoofing | Flags emails where display name claims clinic but domain is external |
+| Quarantine Flag | Phishing emails automatically marked quarantined=True |
+| CSV Logging | Every analysis logged to phishing_log.csv with full audit trail |
+| Expanded Keywords | 21 phishing keywords (was 15), 15 healthcare lures (was 8) |
+| Expanded URL Patterns | 7 URL patterns (was 4), including login-page and verify-account patterns |
+
+### Scoring System
+| Signal | Points |
+|---|---|
+| Phishing keyword match | +15 per keyword |
+| Healthcare-specific lure | +10 per lure |
+| Suspicious sender pattern | +20 |
+| Suspicious URL in body | +20 |
+| Attachment present | +10 |
+| Urgency signal (all-caps subject words) | +10 |
+| Obfuscation pattern detected | +15 per pattern |
+| Display-name spoofing | +25 |
+
+### Classification Thresholds
+| Score | Classification | Action |
+|---|---|---|
+| 0–29 | Safe | Deliver to inbox |
+| 30–59 | Suspicious | Warn user; flag for IT review |
+| 60–100 | Phishing | Quarantine immediately; do not deliver |
+
+### Validation Results (Checkpoint 3)
+- **15 test cases** run (5 regression from CP2 + 10 new)
+- **13/15 passing** (2 documented edge cases)
+- **Precision: 100%** — zero false positives
+- **Recall: 88.9%** — 8 of 9 threats caught
+- **F1 Score: 94.1%**
+- **Accuracy: 93.3%** (up from estimated 60% in v1 baseline)
+
+---
 
 ## Repository Structure
-- `README.md` — project overview and scope
-- `docs/` — diagrams, charter, and supporting documentation
-- `src/` — project code and implementation files
-- `data/` — sample or training data if used
+```
+CS361/
+├── README.md                        — This file
+├── src/
+│   ├── phishing_detector.py         — v1 baseline (Checkpoint 2)
+│   └── phishing_detector_v2.py      — v2 with defensive controls (Checkpoint 3)
+├── docs/
+│   ├── diagram.png                  — System architecture diagram
+│   └── workflow_diagram.png         — AI detection workflow diagram
+├── data/
+│   ├── sample_emails.txt            — Labeled sample emails (phishing + legitimate)
+│   └── phishing_log.csv             — Auto-generated log from v2 test run
+└── reports/
+    ├── Checkpoint2_Final.docx       — CP2 submission
+    └── Checkpoint3_Submission.docx  — CP3 submission
+```
 
-## Initial Diagram
-The project includes an initial system diagram showing the flow of an email through preprocessing, analysis, AI-assisted detection, and final classification.
+---
 
-## Future Improvements
-- Improve detection accuracy with a larger dataset
-- Add stronger feature extraction for links, headers, and sender behavior
-- Integrate with a simulated email environment
-- Expand the system to support alerting or quarantine workflows
+## Running the Detector
 
-## System Architecture
-![System Diagram](docs/diagram.png)
+### Requirements
+- Python 3.8+
+- No external dependencies (uses standard library only)
+
+### Run v2 (Checkpoint 3)
+```bash
+python src/phishing_detector_v2.py
+```
+
+This will:
+1. Run all 15 test cases
+2. Print classification, risk score, quarantine status, and flags for each
+3. Print a validation summary with accuracy metrics and before/after comparison
+4. Write `phishing_log.csv` with a timestamped entry for every email analyzed
+
+### Run v1 (Checkpoint 2 baseline)
+```bash
+python src/phishing_detector.py
+```
+
+---
+
+## Assets Protected
+| Asset | Priority |
+|---|---|
+| Patient data (HIPAA) | Critical |
+| Employee credentials | Critical |
+| Email accounts | High |
+| Email server / system | High |
+| AI detection model | High |
+| Internal network | High |
+| Email attachments / links | Medium |
+| Employee trust in system | Medium |
+
+---
+
+## Key Threats Identified
+1. Phishing emails with healthcare lures
+2. Credential harvesting via fake login pages
+3. Malware delivery via email attachments
+4. Social engineering / display-name spoofing
+5. AI evasion via obfuscated keywords
+
+---
+
+## Scope Limitations
+This project focuses on **detection only**. The following are out of scope for this timeline:
+- Full enterprise email server integration
+- Live connection to a real email provider
+- Automated blocking infrastructure
+- Production-level ML model training
+
+---
+
+## Team
+| Name | Role |
+|---|---|
+| Sergio Olivas | Project Lead / Research |
+| Khumbo Nyirenda | Data Collection |
+| Cerilo Yousif | Development |
+| Ernest Apollon | Development |
+| Victor Olatunji | Documentation |
+
+---
+
+## References
+- NIST SP 800-63B — Digital Identity Guidelines
+- CIS Controls v8 — Control 9 (Email and Web Browser Protections)
+- HIPAA Security Rule — 45 CFR Part 164
